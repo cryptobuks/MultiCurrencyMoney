@@ -8,20 +8,20 @@ class Money implements Expression {
         this.currency = currency;
     }
 
-    static Money dollar(int amount) {
+    public static Money dollar(int amount) {
         return new Money(amount, "USD");
     }
 
-    static Money franc(int amount) {
+    public static Money franc(int amount) {
         return new Money(amount, "CHF");
     }
 
-    Money times(int multiplier) {
+    public Expression times(int multiplier) {
         return new Money(amount * multiplier, currency);
     }
 
     public boolean equals(Object object) {
-        Money money = (Money) object;
+        Money money = (Money)object;
         return this.amount == money.amount && this.currency().equals(money.currency());
     }
 
@@ -29,8 +29,13 @@ class Money implements Expression {
         return currency;
     }
 
-    Money plus(Money addend) {
-        return new Money(amount + addend.amount, currency);
+    public Expression plus(Expression addend) {
+        return new Sum(this, addend);
+    }
+
+    public Money reduce(Bank bank, String to) {
+        int rate = bank.rate(currency, to);
+        return new Money(amount / rate, to);
     }
 
     public String toString() {
